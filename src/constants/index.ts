@@ -28,4 +28,4 @@ export const FAN_RANKS: FanRank[] = [
     description: 'Are you sure you picked the right artist?',
     minScore: 0,
   },
-] as const
+]
