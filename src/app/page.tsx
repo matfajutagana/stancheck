@@ -1,14 +1,6 @@
-import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
 import LoginButton from '@/components/ui/LoginButton'
 
-export default async function HomePage() {
-  const session = await getServerSession()
-
-  if (session) {
-    redirect('/search')
-  }
-
+export default function HomePage() {
   return (
     <main className='min-h-screen bg-black flex flex-col items-center justify-center px-4'>
       <div className='max-w-md w-full text-center space-y-8'>
