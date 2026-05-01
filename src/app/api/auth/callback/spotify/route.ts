@@ -28,6 +28,16 @@ export async function GET(request: NextRequest) {
     access_token: string
     refresh_token: string
     expires_in: number
+    error?: string
+    error_description?: string
+  }
+
+  console.log('Token response:', JSON.stringify(tokens))
+
+  if (tokens.error) {
+    return NextResponse.redirect(
+      new URL(`http://127.0.0.1:3000/?error=${tokens.error}`),
+    )
   }
 
   const redirectResponse = NextResponse.redirect(

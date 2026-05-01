@@ -1,13 +1,7 @@
 import { redirect } from 'next/navigation'
 
 export async function GET() {
-  const scopes = [
-    'streaming',
-    'user-read-email',
-    'user-read-private',
-    'user-read-playback-state',
-    'user-modify-playback-state',
-  ].join(' ')
+  const scopes = ['user-read-email', 'user-read-private'].join(' ')
 
   const params = new URLSearchParams({
     response_type: 'code',
