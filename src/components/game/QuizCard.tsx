@@ -107,7 +107,7 @@ export default function QuizCard({
           }}
         />
 
-        {/* top bar */}
+        {/* top bar — logo left, question counter + score right */}
         <div
           style={{
             position: 'absolute',
@@ -119,44 +119,54 @@ export default function QuizCard({
             alignItems: 'center',
           }}
         >
-          <span
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '10px',
-              color: 'rgba(255,255,255,0.6)',
-              letterSpacing: '0.15em',
-            }}
-          >
-            {questionNumber} / {totalQuestions}
-          </span>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              background: 'rgba(0,0,0,0.3)',
-              borderRadius: '20px',
-              padding: '4px 10px',
-            }}
-          >
-            <div
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                background: 'var(--accent)',
-              }}
-            />
+          {/* logo */}
+          <img
+            src='/logo.svg'
+            alt='StanCheck'
+            style={{ height: '28px', width: 'auto' }}
+          />
+
+          {/* question counter + score */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: '10px',
-                color: '#fff',
-                fontWeight: 700,
+                color: 'rgba(255,255,255,0.6)',
+                letterSpacing: '0.15em',
               }}
             >
-              {score} correct
+              {questionNumber} / {totalQuestions}
             </span>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                background: 'rgba(0,0,0,0.3)',
+                borderRadius: '20px',
+                padding: '4px 10px',
+              }}
+            >
+              <div
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: 'var(--accent)',
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '10px',
+                  color: '#fff',
+                  fontWeight: 700,
+                }}
+              >
+                {score} correct
+              </span>
+            </div>
           </div>
         </div>
       </div>

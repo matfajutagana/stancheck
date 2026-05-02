@@ -65,6 +65,21 @@ export default function ResultCard({ gameState }: Props) {
           }}
         />
 
+        {/* logo top left */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '16px',
+            left: '16px',
+          }}
+        >
+          <img
+            src='/logo.svg'
+            alt='StanCheck'
+            style={{ height: '28px', width: 'auto' }}
+          />
+        </div>
+
         {/* artist name overlay */}
         <div style={{ position: 'absolute', bottom: '16px', left: '20px' }}>
           <p

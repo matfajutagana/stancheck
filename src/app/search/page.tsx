@@ -12,6 +12,7 @@ export default function SearchPage() {
         justifyContent: 'center',
         padding: '2rem 1.5rem',
         overflowX: 'hidden',
+        width: '100%',
       }}
     >
       {/* logo */}
@@ -23,7 +24,13 @@ export default function SearchPage() {
         />
       </div>
 
-      <div style={{ maxWidth: '400px', width: '100%' }}>
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '400px',
+          minWidth: 0, // ← prevents flex children from overflowing
+        }}
+      >
         <p
           style={{
             fontFamily: 'var(--font-mono)',
@@ -54,7 +61,7 @@ export default function SearchPage() {
           </span>
         </h1>
 
-        {/* <p
+        <p
           style={{
             fontFamily: 'var(--font-serif)',
             fontSize: '16px',
@@ -64,7 +71,7 @@ export default function SearchPage() {
           }}
         >
           who do you stan?
-        </p> */}
+        </p>
 
         <ArtistSearch />
       </div>

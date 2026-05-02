@@ -35,24 +35,33 @@ export default function ArtistSearch() {
   }
 
   return (
-    <div style={{ position: 'relative', width: '100%' }}>
+    // ← overflow hidden here clips the dropdown to the container width
+    <div style={{ position: 'relative', width: '100%', minWidth: 0 }}>
       <input
         type='text'
+        inputMode='search' // ← correct keyboard type on mobile
+        autoComplete='off'
+        autoCorrect='off'
+        autoCapitalize='off'
+        spellCheck={false}
         value={query}
         onChange={(e) => handleSearch(e.target.value)}
         placeholder='e.g. Eraserheads, Drake, Kamikazee...'
         style={{
           width: '100%',
+          maxWidth: '100%', // ← never exceed parent
+          display: 'block', // ← no inline spacing quirks
           background: '#fff',
           border: '1.5px solid var(--cream-border)',
           borderRadius: '10px',
           padding: '14px 16px',
-          fontSize: '14px',
+          fontSize: '16px', // ← 16px prevents iOS auto-zoom on focus
           fontFamily: 'var(--font-sans)',
           color: 'var(--text-primary)',
           outline: 'none',
           marginBottom: '8px',
           boxSizing: 'border-box',
+          WebkitAppearance: 'none',
         }}
       />
 
@@ -78,12 +87,14 @@ export default function ArtistSearch() {
             top: '100%',
             left: 0,
             right: 0,
+            width: '100%', // ← explicit width matches parent
             background: '#fff',
             border: '0.5px solid var(--cream-border)',
             borderRadius: '10px',
             overflow: 'hidden',
             zIndex: 10,
             boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+            boxSizing: 'border-box',
           }}
         >
           {artists.map((artist, i) => (
@@ -104,6 +115,7 @@ export default function ArtistSearch() {
                     : 'none',
                 cursor: 'pointer',
                 textAlign: 'left',
+                boxSizing: 'border-box',
               }}
             >
               <span
@@ -138,6 +150,9 @@ export default function ArtistSearch() {
                   fontSize: '14px',
                   color: 'var(--text-primary)',
                   fontWeight: 500,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {artist.name}

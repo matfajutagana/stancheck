@@ -1,48 +1,142 @@
+'use client'
+
 import { useState, useEffect, useCallback } from 'react'
 import type { GameState, QuizQuestion, SpotifyTrack, UserAnswer } from '@/types'
 import { GAME_CONFIG } from '@/constants'
 
-function shuffleArray<T>(array: T[]): T[] {
-  return [...array].sort(() => Math.random() - 0.5)
+// Lightweight type for distractor-only tracks (no preview_url needed)
+interface DistractorTrack {
+  id: string
+  name: string
+  album: {
+    name: string
+    images: { url: string; width: number; height: number }[]
+  }
 }
 
-function buildQuestions(tracks: SpotifyTrack[]): QuizQuestion[] {
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array]
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[arr[i], arr[j]] = [arr[j], arr[i]]
+  }
+  return arr
+}
+
+/**
+ * Pick distractors for a question.
+ *
+ * Uses the full distractorPool (no preview needed — names only).
+ *
+ * Priority:
+ *   1. Same-album tracks first — fan has to know the exact song name
+ *   2. Any other track as fallback
+ *
+ * Never includes:
+ *   - The correct track itself
+ *   - Any song that is a correct answer elsewhere in the quiz (bannedNames)
+ */
+function pickDistractors(
+  correctTrack: SpotifyTrack,
+  distractorPool: DistractorTrack[],
+  bannedNames: Set<string>,
+  count: number,
+): string[] {
+  const correctKey = correctTrack.name.toLowerCase().trim()
+
+  const eligible = distractorPool.filter((t) => {
+    const key = t.name.toLowerCase().trim()
+    return key !== correctKey && !bannedNames.has(key)
+  })
+
+  const sameAlbum = shuffleArray(
+    eligible.filter((t) => t.album.name === correctTrack.album.name),
+  )
+  const others = shuffleArray(
+    eligible.filter((t) => t.album.name !== correctTrack.album.name),
+  )
+
+  const picked: DistractorTrack[] = []
+
+  const addFrom = (pool: DistractorTrack[]) => {
+    for (const t of pool) {
+      if (picked.length >= count) break
+      const key = t.name.toLowerCase().trim()
+      if (!picked.find((p) => p.name.toLowerCase().trim() === key)) {
+        picked.push(t)
+      }
+    }
+  }
+
+  // same-album first, then anything else
+  addFrom(sameAlbum)
+  addFrom(others)
+
+  // absolute last resort — ignore banned names if we're still short
+  if (picked.length < count) {
+    const fallback = shuffleArray(
+      distractorPool.filter((t) => {
+        const key = t.name.toLowerCase().trim()
+        return (
+          key !== correctKey &&
+          !picked.find((p) => p.name.toLowerCase().trim() === key)
+        )
+      }),
+    )
+    addFrom(fallback)
+  }
+
+  return picked.slice(0, count).map((t) => t.name)
+}
+
+/**
+ * Build 10 questions from a fully shuffled playable pool.
+ * Distractors come from the separate distractorPool which includes
+ * ALL album tracks regardless of preview availability.
+ */
+function buildQuestions(
+  tracks: SpotifyTrack[],
+  distractorPool: DistractorTrack[],
+): QuizQuestion[] {
+  // Deduplicate playable tracks by name
   const seen = new Set<string>()
-  const uniqueTracks = tracks.filter((track) => {
-    const key = track.name.toLowerCase().trim()
+  const unique = tracks.filter((t) => {
+    const key = t.name.toLowerCase().trim()
     if (seen.has(key)) return false
     seen.add(key)
     return true
   })
 
-  // DON'T shuffle all tracks — preserve order from API
-  // First 5 = popular hits (easy), rest = deep cuts (hard)
-  // Only shuffle within each group
-  const easyPool = uniqueTracks.slice(0, 5)
-  const hardPool = uniqueTracks.slice(5)
+  // Fully random — no tiers, different every session
+  const selected = shuffleArray(unique).slice(0, GAME_CONFIG.TOTAL_QUESTIONS)
 
-  const shuffledEasy = shuffleArray(easyPool)
-  const shuffledHard = shuffleArray(hardPool)
+  // Pre-ban ALL correct answers from being distractors anywhere in the quiz
+  const allCorrectNames = new Set(
+    selected.map((t) => t.name.toLowerCase().trim()),
+  )
 
-  // take up to 5 easy + 5 hard
-  const selected = [...shuffledEasy.slice(0, 5), ...shuffledHard.slice(0, 5)]
+  return selected.map((track) => {
+    const correctKey = track.name.toLowerCase().trim()
 
-  return selected.map((track, i) => {
-    const pool = uniqueTracks.filter(
-      (t) => t.name.toLowerCase().trim() !== track.name.toLowerCase().trim(),
+    // Remove this question's own answer from the banned set
+    const bannedForThisQuestion = new Set(
+      [...allCorrectNames].filter((k) => k !== correctKey),
     )
 
-    const decoys = shuffleArray(pool)
-      .slice(0, Math.min(GAME_CONFIG.OPTIONS_COUNT - 1, pool.length))
-      .map((t) => t.name)
+    const distractors = pickDistractors(
+      track,
+      distractorPool,
+      bannedForThisQuestion,
+      GAME_CONFIG.OPTIONS_COUNT - 1,
+    )
 
-    const options = shuffleArray([track.name, ...decoys])
+    const options = shuffleArray([track.name, ...distractors])
 
     return {
       track,
       options,
       correctAnswer: track.name,
-    }
+    } satisfies QuizQuestion
   })
 }
 
@@ -62,15 +156,21 @@ export function useGame(artistId: string) {
 
     async function loadTracks() {
       try {
-        // fetch artist info and tracks together
         const [tracksRes, artistRes] = await Promise.all([
-          fetch(`/api/deezer/tracks?artistId=${artistId}`),
-          fetch(`/api/deezer/artist?artistId=${artistId}`),
+          fetch(`/api/deezer/tracks?artistId=${artistId}`, {
+            signal: controller.signal,
+          }),
+          fetch(`/api/deezer/artist?artistId=${artistId}`, {
+            signal: controller.signal,
+          }),
         ])
 
         if (controller.signal.aborted) return
 
-        const data = (await tracksRes.json()) as { tracks: SpotifyTrack[] }
+        const data = (await tracksRes.json()) as {
+          tracks: SpotifyTrack[]
+          distractorPool: DistractorTrack[]
+        }
         const artistData = (await artistRes.json()) as {
           name: string
           image: string
@@ -78,14 +178,13 @@ export function useGame(artistId: string) {
 
         if (controller.signal.aborted) return
 
-        console.log('Tracks received:', data.tracks.length)
-
         if (data.tracks.length < 4) {
-          console.error('Not enough tracks')
+          console.error('Not enough tracks to build a quiz')
           return
         }
 
-        const questions = buildQuestions(data.tracks)
+        const questions = buildQuestions(data.tracks, data.distractorPool)
+
         setGameState((prev) => ({
           ...prev,
           questions,
@@ -101,16 +200,12 @@ export function useGame(artistId: string) {
     }
 
     loadTracks()
-
-    return () => {
-      controller.abort()
-    }
+    return () => controller.abort()
   }, [artistId])
 
   const answerQuestion = useCallback(
     (selectedAnswer: string, timeLeft: number) => {
       const currentQuestion = gameState.questions[gameState.currentIndex]
-
       if (!currentQuestion) return
 
       const isCorrect = selectedAnswer === currentQuestion.correctAnswer

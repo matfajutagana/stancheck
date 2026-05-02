@@ -42,75 +42,90 @@ export async function GET(request: NextRequest) {
   const artistId = request.nextUrl.searchParams.get('artistId')
 
   if (!artistId) {
-    return NextResponse.json({ tracks: [] })
+    return NextResponse.json({ tracks: [], distractorPool: [] })
   }
 
   try {
-    // Step 1 — fetch top tracks (popular hits)
+    // Step 1 — fetch top tracks, ONLY ones with previews (these get played)
     const topRes = await fetch(
       `https://api.deezer.com/artist/${artistId}/top?limit=50`,
     )
     const topData = (await topRes.json()) as { data: DeezerTrack[] }
-    const topTracks = (topData.data ?? []).filter((t) => t.preview)
+    const allTopTracks = topData.data ?? []
+    const topTracksWithPreview = allTopTracks.filter((t) => t.preview)
 
-    console.log('Top tracks with preview:', topTracks.length)
-
-    // Step 2 — fetch albums for deep cuts
+    // Step 2 — fetch albums
     const albumsRes = await fetch(
-      `https://api.deezer.com/artist/${artistId}/albums?limit=20`,
+      `https://api.deezer.com/artist/${artistId}/albums?limit=25`,
     )
     const albumsData = (await albumsRes.json()) as { data: DeezerAlbum[] }
     const albums = albumsData.data ?? []
 
-    console.log('Albums found:', albums.length)
-
-    // Step 3 — get tracks from 3 random albums
-    const albumTracks: DeezerTrack[] = []
-    const pickedAlbums = albums.slice(0, 5)
-
-    for (const album of pickedAlbums) {
+    // Step 3 — fetch album tracks
+    // withPreview → playable correct answers
+    // all         → distractor names (no preview needed)
+    async function fetchAlbumTracks(album: DeezerAlbum): Promise<{
+      withPreview: DeezerTrack[]
+      all: DeezerTrack[]
+    }> {
       const res = await fetch(
-        `https://api.deezer.com/album/${album.id}/tracks?limit=20`,
+        `https://api.deezer.com/album/${album.id}/tracks?limit=50`,
       )
       const data = (await res.json()) as { data: DeezerTrack[] }
-      const items = (data.data ?? [])
-        .filter((t) => t.preview)
-        .map((t) => ({
-          ...t,
-          album: {
-            id: album.id,
-            title: album.title,
-            cover_big: album.cover_big,
-            cover_medium: album.cover_medium,
-          },
-        }))
-      albumTracks.push(...items)
+      const mapped = (data.data ?? []).map((t) => ({
+        ...t,
+        album: {
+          id: album.id,
+          title: album.title,
+          cover_big: album.cover_big,
+          cover_medium: album.cover_medium,
+        },
+      }))
+      return {
+        withPreview: mapped.filter((t) => t.preview),
+        all: mapped, // no preview filter — distractors just need a name
+      }
     }
 
-    console.log('Album tracks with preview:', albumTracks.length)
-
-    // Step 4 — deduplicate top tracks first
-    const uniqueTopTracks = deduplicateByName(topTracks)
-
-    // Step 5 — take top 5 as "easy" questions
-    const easyTracks = uniqueTopTracks.slice(0, 5)
-
-    // Step 6 — combine remaining top tracks + album tracks for deep cuts pool
-    const deepCutPool = deduplicateByName([
-      ...uniqueTopTracks.slice(5),
-      ...albumTracks,
-    ])
-
-    // Step 7 — filter out songs already in easy tracks
-    const easyNames = new Set(
-      easyTracks.map((t) => cleanTitle(t.title).toLowerCase()),
+    const albumResults = await Promise.all(
+      albums.slice(0, 12).map(fetchAlbumTracks),
     )
-    const hardTracks = deepCutPool
-      .filter((t) => !easyNames.has(cleanTitle(t.title).toLowerCase()))
-      .slice(0, 20)
 
-    // Step 8 — combine: easy first, then deep cuts
-    const finalTracks = [...easyTracks, ...hardTracks].map((track) => ({
+    const albumTracksWithPreview = albumResults.flatMap((r) => r.withPreview)
+    const albumTracksAll = albumResults.flatMap((r) => r.all)
+
+    // Step 4 — playable pool (preview required)
+    const uniqueTop = deduplicateByName(topTracksWithPreview)
+    const uniqueAlbumPlayable = deduplicateByName(albumTracksWithPreview)
+
+    const topNames = new Set(
+      uniqueTop.map((t) => cleanTitle(t.title).toLowerCase()),
+    )
+    const extraPlayable = uniqueAlbumPlayable.filter(
+      (t) => !topNames.has(cleanTitle(t.title).toLowerCase()),
+    )
+
+    const playableTracks = deduplicateByName([...uniqueTop, ...extraPlayable])
+
+    // Step 5 — distractor pool (no preview needed, just names + album info)
+    // Full tracklist of every album so same-album distractors actually work
+    const distractorPool = deduplicateByName([
+      ...allTopTracks,
+      ...albumTracksAll,
+    ]).map((track) => ({
+      id: String(track.id),
+      name: cleanTitle(track.title),
+      album: {
+        name: track.album?.title ?? '',
+        images: [
+          { url: track.album?.cover_big ?? '', width: 640, height: 640 },
+          { url: track.album?.cover_medium ?? '', width: 320, height: 320 },
+        ],
+      },
+    }))
+
+    // Step 6 — final shape for playable tracks
+    const finalTracks = playableTracks.map((track) => ({
       id: String(track.id),
       name: cleanTitle(track.title),
       preview_url: track.preview,
@@ -130,13 +145,12 @@ export async function GET(request: NextRequest) {
       },
     }))
 
-    console.log('Final tracks:', finalTracks.length)
-    console.log('Easy (top hits):', easyTracks.length)
-    console.log('Deep cuts:', hardTracks.length)
+    console.log('Playable tracks:', finalTracks.length)
+    console.log('Distractor pool:', distractorPool.length)
 
-    return NextResponse.json({ tracks: finalTracks })
+    return NextResponse.json({ tracks: finalTracks, distractorPool })
   } catch (error) {
     console.error('Deezer tracks error:', error)
-    return NextResponse.json({ tracks: [] })
+    return NextResponse.json({ tracks: [], distractorPool: [] })
   }
 }
