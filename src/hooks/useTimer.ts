@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { GAME_CONFIG } from '@/constants'
 
 export function useTimer(onExpire: () => void) {
-  const [timeLeft, setTimeLeft] = useState(GAME_CONFIG.TIMER_SECONDS)
+  const [timeLeft, setTimeLeft] = useState<number>(GAME_CONFIG.TIMER_SECONDS)
   const [isRunning, setIsRunning] = useState(false)
 
   useEffect(() => {
