@@ -8,7 +8,7 @@ export function useTimer(onExpire: () => void) {
   useEffect(() => {
     if (!isRunning) return
 
-    if (timeLeft === 0) {
+    if (timeLeft <= 0) {
       onExpire()
       return
     }
