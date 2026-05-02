@@ -11,10 +11,10 @@ export default function HomePage() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '2rem 1.5rem',
+        overflowX: 'hidden',
       }}
     >
       <div style={{ maxWidth: '400px', width: '100%' }}>
-        {/* label */}
         <p
           style={{
             fontFamily: 'var(--font-mono)',
@@ -24,10 +24,9 @@ export default function HomePage() {
             marginBottom: '1.5rem',
           }}
         >
-          STANCHECK
+          WHODOYOUSTAN
         </p>
 
-        {/* headline */}
         <h1
           style={{
             fontFamily: 'var(--font-serif)',
@@ -36,11 +35,12 @@ export default function HomePage() {
             fontWeight: 900,
             lineHeight: 1.05,
             marginBottom: '12px',
+            wordBreak: 'break-word',
           }}
         >
-          How well do you know your{' '}
+          Who do you{' '}
           <span style={{ color: 'var(--accent)', fontStyle: 'italic' }}>
-            artist?
+            stan?
           </span>
         </h1>
 
@@ -54,10 +54,9 @@ export default function HomePage() {
             lineHeight: 1.6,
           }}
         >
-          10 tracks · 15 seconds each · get your fan rank
+          pick your artist · guess the songs · get your fan rank
         </p>
 
-        {/* badges */}
         <div
           style={{
             display: 'flex',
@@ -85,7 +84,6 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* CTA */}
         <Link
           href='/search'
           style={{
@@ -115,7 +113,7 @@ export default function HomePage() {
             textAlign: 'center',
           }}
         >
-          powered by deezer
+          powered by deezer · no account needed
         </p>
 
         <p

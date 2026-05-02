@@ -10,9 +10,19 @@ export default function SearchPage() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '4rem 1.5rem 2rem',
+        padding: '2rem 1.5rem',
+        overflowX: 'hidden',
       }}
     >
+      {/* logo */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <img
+          src='/logo.svg'
+          alt='Who Do You Stan'
+          style={{ height: '40px', width: 'auto' }}
+        />
+      </div>
+
       <div style={{ maxWidth: '400px', width: '100%' }}>
         <p
           style={{
@@ -29,11 +39,13 @@ export default function SearchPage() {
         <h1
           style={{
             fontFamily: 'var(--font-serif)',
-            fontSize: 'clamp(90px, 13vw, 72px)',
+            fontSize: 'clamp(48px, 15vw, 72px)',
             color: 'var(--text-primary)',
             fontWeight: 900,
-            lineHeight: 1.05,
+            lineHeight: 1,
             marginBottom: '8px',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
           }}
         >
           Pick an{' '}
@@ -42,7 +54,7 @@ export default function SearchPage() {
           </span>
         </h1>
 
-        <p
+        {/* <p
           style={{
             fontFamily: 'var(--font-serif)',
             fontSize: '16px',
@@ -52,7 +64,8 @@ export default function SearchPage() {
           }}
         >
           who do you stan?
-        </p>
+        </p> */}
+
         <ArtistSearch />
       </div>
     </main>

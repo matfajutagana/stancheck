@@ -240,8 +240,8 @@ export default function ResultCard({ gameState }: Props) {
           onClick={async () => {
             if (navigator.share) {
               await navigator.share({
-                title: 'StanCheck',
-                text: `I got "${rank.title}" on the ${artistName} StanCheck! ${rankMessage()} — stancheck-mat.vercel.app`,
+                title: 'Who do you Stan?',
+                text: `I got "${rank.title}" on the ${artistName} quiz! ${rankMessage()} — stancheck-mat.vercel.app`,
                 url: 'https://stancheck-mat.vercel.app',
               })
             } else {

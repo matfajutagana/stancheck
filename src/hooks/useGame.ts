@@ -15,11 +15,17 @@ function buildQuestions(tracks: SpotifyTrack[]): QuizQuestion[] {
     return true
   })
 
-  console.log('Building questions from', uniqueTracks.length, 'unique tracks')
+  // DON'T shuffle all tracks — preserve order from API
+  // First 5 = popular hits (easy), rest = deep cuts (hard)
+  // Only shuffle within each group
+  const easyPool = uniqueTracks.slice(0, 5)
+  const hardPool = uniqueTracks.slice(5)
 
-  const shuffled = shuffleArray(uniqueTracks)
-  const total = Math.min(GAME_CONFIG.TOTAL_QUESTIONS, shuffled.length)
-  const selected = shuffled.slice(0, total)
+  const shuffledEasy = shuffleArray(easyPool)
+  const shuffledHard = shuffleArray(hardPool)
+
+  // take up to 5 easy + 5 hard
+  const selected = [...shuffledEasy.slice(0, 5), ...shuffledHard.slice(0, 5)]
 
   return selected.map((track, i) => {
     const pool = uniqueTracks.filter(
@@ -31,11 +37,6 @@ function buildQuestions(tracks: SpotifyTrack[]): QuizQuestion[] {
       .map((t) => t.name)
 
     const options = shuffleArray([track.name, ...decoys])
-
-    const hasCorrect = options.includes(track.name)
-    if (!hasCorrect) {
-      console.error(`Q${i + 1} missing correct answer!`, track.name, options)
-    }
 
     return {
       track,

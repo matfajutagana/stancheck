@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="#c0392b"/>
+  
+  <!-- Headphones arc -->
+  <path d="M140 280v-72a116 116 0 01232 0v72" stroke="#f5efe6" stroke-width="36" stroke-linecap="round" fill="none"/>
+  
+  <!-- Left ear cup -->
+  <rect x="100" y="268" width="72" height="110" rx="36" fill="#f5efe6"/>
+  
+  <!-- Right ear cup -->
+  <rect x="340" y="268" width="72" height="110" rx="36" fill="#f5efe6"/>
+
+  <!-- Question mark circle -->
+  <circle cx="370" cy="148" r="80" fill="#1a1a1a"/>
+  
+  <!-- Question mark -->
+  <text x="370" y="178" font-family="Georgia, serif" font-size="90" font-weight="900" fill="#f5efe6" text-anchor="middle">?</text>
+</svg>

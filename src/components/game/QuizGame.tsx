@@ -103,7 +103,7 @@ export default function QuizGame({ artistId }: Props) {
               marginBottom: '2rem',
             }}
           >
-            STANCHECK
+            WHODOYOUSTAN
           </p>
           <div
             style={{

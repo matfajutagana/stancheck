@@ -2,10 +2,15 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'StanCheck — How well do you know your artist?',
-  description: '10 tracks. 15 seconds each. Find out your fan rank.',
+  title: 'Who Do You Stan? — Prove you know your artist',
+  description:
+    "Pick your favourite artist, guess the songs, find out if you're a real fan.",
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
-
 export default function RootLayout({
   children,
 }: {

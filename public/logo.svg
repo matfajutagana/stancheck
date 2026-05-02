@@ -1,0 +1,23 @@
+<svg width="280" height="52" viewBox="0 0 280 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon background -->
+  <rect width="52" height="52" rx="12" fill="#c0392b"/>
+  
+  <!-- Headphones arc -->
+  <path d="M13 28v-8a13 13 0 0126 0v8" stroke="#f5efe6" stroke-width="4" stroke-linecap="round" fill="none"/>
+  
+  <!-- Left ear cup -->
+  <rect x="9" y="26" width="8" height="12" rx="4" fill="#f5efe6"/>
+  
+  <!-- Right ear cup -->
+  <rect x="35" y="26" width="8" height="12" rx="4" fill="#f5efe6"/>
+
+  <!-- Question mark circle -->
+  <circle cx="39" cy="14" r="9" fill="#1a1a1a"/>
+  
+  <!-- Question mark -->
+  <text x="39" y="18" font-family="Georgia, serif" font-size="11" font-weight="900" fill="#f5efe6" text-anchor="middle">?</text>
+
+  <!-- Wordmark -->
+  <text x="64" y="22" font-family="Georgia, serif" font-size="18" font-weight="900" fill="#1a1a1a">Who Do You</text>
+  <text x="64" y="44" font-family="Georgia, serif" font-size="18" font-weight="900" fill="#c0392b" font-style="italic">Stan?</text>
+</svg>
