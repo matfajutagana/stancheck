@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import FloatingCovers from '@/components/ui/FloatingCovers'
 
 export default function HomePage() {
   return (
@@ -14,7 +15,15 @@ export default function HomePage() {
         overflowX: 'hidden',
       }}
     >
-      <div style={{ maxWidth: '400px', width: '100%' }}>
+      <FloatingCovers />
+      <div
+        style={{
+          maxWidth: '400px',
+          width: '100%',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
         <p
           style={{
             fontFamily: 'var(--font-mono)',

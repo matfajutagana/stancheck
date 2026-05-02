@@ -1,4 +1,5 @@
 import ArtistSearch from '@/components/game/ArtistSearch'
+import FloatingCovers from '@/components/ui/FloatingCovers'
 
 export default function SearchPage() {
   return (
@@ -15,6 +16,8 @@ export default function SearchPage() {
         width: '100%',
       }}
     >
+      <FloatingCovers />
+
       {/* logo */}
       <div style={{ marginBottom: '1.5rem' }}>
         <img
@@ -28,7 +31,9 @@ export default function SearchPage() {
         style={{
           width: '100%',
           maxWidth: '400px',
-          minWidth: 0, // ← prevents flex children from overflowing
+          minWidth: 0,
+          position: 'relative',
+          zIndex: 1,
         }}
       >
         <p
