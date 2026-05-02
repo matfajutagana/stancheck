@@ -30,125 +30,338 @@ export default function QuizCard({
 }: Props) {
   const timerPercent = (timeLeft / GAME_CONFIG.TIMER_SECONDS) * 100
   const timerColor =
-    timeLeft > 8 ? '#ff3e3e' : timeLeft > 4 ? '#ffaa00' : '#ff0000'
+    timeLeft > 8 ? 'var(--accent)' : timeLeft > 4 ? '#e67e22' : '#c0392b'
 
-  function getButtonStyle(option: string) {
+  function getButtonStyle(option: string): React.CSSProperties {
     if (!isAnswered) {
-      return 'bg-[#0a0a0a] border-[#e8e0d0] text-[#e8e0d0] hover:bg-[#1a1a1a] hover:border-[#ff3e3e]'
+      return {
+        background: '#fff',
+        border: '1px solid var(--cream-border)',
+        color: 'var(--text-primary)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+      }
     }
     if (option === question.correctAnswer) {
-      return 'bg-[#1a3a1a] border-[#4ade80] text-[#4ade80] font-bold'
+      return {
+        background: '#f0faf0',
+        border: '1.5px solid #27ae60',
+        color: '#27ae60',
+        boxShadow: '0 2px 8px rgba(39,174,96,0.15)',
+      }
     }
     if (option === selectedAnswer && option !== question.correctAnswer) {
-      return 'bg-[#3a1a1a] border-[#ff3e3e] text-[#ff3e3e] line-through'
+      return {
+        background: '#fff8f6',
+        border: '1.5px solid var(--accent)',
+        color: 'var(--accent)',
+        textDecoration: 'line-through',
+        opacity: 0.7,
+      }
     }
-    return 'bg-[#0a0a0a] border-zinc-800 text-zinc-600'
+    return {
+      background: '#fff',
+      border: '1px solid var(--cream-border)',
+      color: 'var(--text-muted)',
+      opacity: 0.4,
+      boxShadow: 'none',
+    }
   }
 
   return (
-    <main className='min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-4 relative overflow-hidden'>
-      {/* background lines */}
+    <main
+      style={{
+        minHeight: '100vh',
+        background: 'var(--cream)',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* artist image hero */}
       <div
-        className='absolute inset-0 opacity-3'
         style={{
-          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 28px, #333 28px, #333 29px)`,
+          position: 'relative',
+          height: '35vh',
+          background: 'linear-gradient(135deg, #1a1a1a, #2a2a2a)',
+          overflow: 'hidden',
+          flexShrink: 0,
         }}
-      />
+      >
+        {question.track.album.images[0] && (
+          <img
+            src={question.track.album.images[0].url}
+            alt='artist'
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: 0.7,
+            }}
+          />
+        )}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(180deg, transparent 30%, var(--cream) 100%)',
+          }}
+        />
 
-      <div className='max-w-sm w-full space-y-5 relative z-10'>
-        {/* header */}
-        <div className='flex justify-between items-center'>
-          <span className='font-mono text-xs text-zinc-500'>
-            TRACK {questionNumber}/{totalQuestions}
-          </span>
+        {/* top bar */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '16px',
+            left: '16px',
+            right: '16px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <span
-            className='text-[#ff3e3e] text-lg'
-            style={{ fontFamily: 'var(--font-bebas)', letterSpacing: '0.1em' }}
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              color: 'rgba(255,255,255,0.6)',
+              letterSpacing: '0.15em',
+            }}
           >
-            {score} CORRECT
+            {questionNumber} / {totalQuestions}
           </span>
-        </div>
-
-        {/* timer bar */}
-        <div className='space-y-1'>
-          <div className='flex justify-between text-xs font-mono text-zinc-600'>
-            <span>TIME</span>
-            <span style={{ color: timerColor }}>{timeLeft}s</span>
-          </div>
-          <div className='h-2 bg-zinc-900 border border-zinc-800'>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'rgba(0,0,0,0.3)',
+              borderRadius: '20px',
+              padding: '4px 10px',
+            }}
+          >
             <div
-              className='h-full transition-all duration-1000'
-              style={{ width: `${timerPercent}%`, background: timerColor }}
+              style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                background: 'var(--accent)',
+              }}
+            />
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '10px',
+                color: '#fff',
+                fontWeight: 700,
+              }}
+            >
+              {score} correct
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* content */}
+      <div
+        style={{
+          padding: '0 1.5rem 2rem',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+        }}
+      >
+        {/* timer */}
+        <div>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '6px',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                color: 'var(--text-secondary)',
+                letterSpacing: '0.1em',
+                fontWeight: 600,
+              }}
+            >
+              TIME LEFT
+            </span>
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '13px',
+                color: timerColor,
+                fontWeight: 700,
+              }}
+            >
+              {timeLeft}s
+            </span>
+          </div>
+          <div
+            style={{
+              height: '3px',
+              background: 'var(--cream-border)',
+              borderRadius: '2px',
+            }}
+          >
+            <div
+              style={{
+                width: `${timerPercent}%`,
+                height: '100%',
+                background: timerColor,
+                borderRadius: '2px',
+                transition: 'width 1s linear, background 0.3s',
+              }}
             />
           </div>
         </div>
 
-        {/* now playing card */}
-        <div className='relative tape border-2 border-[#e8e0d0] p-6 text-center space-y-4 bg-[#0f0f0f]'>
-          <p className='font-mono text-xs text-zinc-500 tracking-widest'>
-            ◆ NOW PLAYING ◆
-          </p>
-
-          {!isPlaying ? (
-            <div className='space-y-3'>
-              <div className='w-16 h-16 border-2 border-zinc-700 rounded-full flex items-center justify-center mx-auto'>
-                <div className='w-3 h-3 rounded-full bg-zinc-700' />
-              </div>
-              <div className='relative'>
-                <div className='absolute inset-0 bg-[#ff3e3e] translate-x-1 translate-y-1' />
-                <button
-                  onClick={onPlay}
-                  className='relative w-full bg-[#e8e0d0] text-[#0a0a0a] font-bold py-3 text-xl transition-all hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1'
+        {/* now playing */}
+        <div
+          style={{
+            background: '#fff',
+            border: '0.5px solid var(--cream-border)',
+            borderRadius: '12px',
+            padding: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
+          {/* vinyl svg */}
+          <svg width='36' height='36' viewBox='0 0 36 36' fill='none'>
+            <circle
+              cx='18'
+              cy='18'
+              r='17'
+              fill='#1a1a1a'
+              stroke='var(--cream-border)'
+              strokeWidth='0.5'
+            />
+            <circle cx='18' cy='18' r='11' fill='#222' />
+            <circle cx='18' cy='18' r='7' fill='#1a1a1a' />
+            <circle cx='18' cy='18' r='3' fill='var(--accent)' />
+            <circle cx='18' cy='18' r='1.2' fill='#111' />
+          </svg>
+          <div style={{ flex: 1 }}>
+            <p
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '9px',
+                color: 'var(--text-secondary)',
+                letterSpacing: '0.15em',
+                marginBottom: '2px',
+                fontWeight: 600,
+              }}
+            >
+              NOW PLAYING
+            </p>
+            <p
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: '14px',
+                color: isAnswered
+                  ? 'var(--text-primary)'
+                  : 'var(--text-secondary)',
+                fontStyle: 'italic',
+                fontWeight: isAnswered ? 700 : 400,
+              }}
+            >
+              {isAnswered ? question.correctAnswer : 'Guess the song...'}
+            </p>
+          </div>
+          {/* sound waves */}
+          {isPlaying && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+              {[8, 14, 10, 6, 12].map((h, i) => (
+                <div
+                  key={i}
                   style={{
-                    fontFamily: 'var(--font-bebas)',
-                    letterSpacing: '0.1em',
+                    width: '2px',
+                    height: `${h}px`,
+                    background: 'var(--accent)',
+                    borderRadius: '1px',
+                    opacity: 0.7,
                   }}
-                >
-                  ▶ PLAY TRACK
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className='space-y-2'>
-              <div className='w-16 h-16 border-2 border-[#ff3e3e] rounded-full flex items-center justify-center mx-auto'>
-                <div className='w-4 h-4 rounded-full bg-[#ff3e3e] animate-pulse' />
-              </div>
-              {isAnswered && (
-                <p
-                  className='text-[#ff3e3e] text-lg'
-                  style={{
-                    fontFamily: 'var(--font-bebas)',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  {question.correctAnswer}
-                </p>
-              )}
-              {!isAnswered && (
-                <p className='text-zinc-600 text-xs font-mono animate-pulse'>
-                  ● PLAYING... GUESS THE TRACK
-                </p>
-              )}
+                />
+              ))}
             </div>
           )}
         </div>
 
+        {/* play button */}
+        {!isPlaying && !isAnswered && (
+          <button
+            onClick={onPlay}
+            style={{
+              width: '100%',
+              background: 'var(--accent)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '14px',
+              fontFamily: 'var(--font-sans)',
+              fontWeight: 700,
+              fontSize: '15px',
+              cursor: 'pointer',
+              letterSpacing: '0.03em',
+            }}
+          >
+            ▶ Play Track
+          </button>
+        )}
+
         {/* choices */}
-        <div className='space-y-2'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {question.options.map((option, i) => (
             <button
               key={option}
               onClick={() => !isAnswered && isPlaying && onAnswer(option)}
               disabled={isAnswered || !isPlaying}
-              className={`w-full border-2 py-3 px-4 text-left transition-all duration-150 flex items-center gap-3 ${getButtonStyle(option)}`}
+              style={{
+                width: '100%',
+                padding: '16px 18px',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+                cursor: isAnswered || !isPlaying ? 'default' : 'pointer',
+                textAlign: 'left',
+                transition: 'all 0.15s',
+                ...getButtonStyle(option),
+              }}
             >
-              <span className='font-mono text-xs opacity-50 w-4'>
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '10px',
+                  color: '#fff',
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  fontWeight: 700,
+                }}
+              >
                 {String.fromCharCode(65 + i)}
               </span>
               <span
                 style={{
-                  fontFamily: 'var(--font-special-elite)',
-                  fontSize: '0.9rem',
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '15px',
+                  fontWeight: 500,
+                  letterSpacing: '-0.01em',
+                  lineHeight: 1.3,
                 }}
               >
                 {option}
@@ -157,9 +370,17 @@ export default function QuizCard({
           ))}
         </div>
 
-        {!isPlaying && (
-          <p className='text-center text-zinc-700 text-xs font-mono'>
-            // press play to start the timer
+        {!isPlaying && !isAnswered && (
+          <p
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              color: 'var(--text-secondary)',
+              textAlign: 'center',
+              letterSpacing: '0.05em',
+            }}
+          >
+            press play to start the timer
           </p>
         )}
       </div>

@@ -82,10 +82,61 @@ export default function QuizGame({ artistId }: Props) {
 
   if (gameState.status === 'idle') {
     return (
-      <main className='min-h-screen bg-[#0a0a0a] flex items-center justify-center'>
-        <div className='text-center space-y-4'>
-          <div className='w-8 h-8 border-2 border-[#ff3e3e] border-t-transparent rounded-full animate-spin mx-auto' />
-          <p className='text-zinc-500 font-mono text-sm'>loading tracks...</p>
+      <main
+        style={{
+          minHeight: '100vh',
+          background: 'var(--cream)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem',
+        }}
+      >
+        <div style={{ textAlign: 'center', maxWidth: '300px' }}>
+          <p
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              color: 'var(--text-muted)',
+              letterSpacing: '0.2em',
+              marginBottom: '2rem',
+            }}
+          >
+            STANCHECK
+          </p>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              border: '2px solid var(--cream-border)',
+              borderTop: '2px solid var(--accent)',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              margin: '0 auto 1.5rem',
+            }}
+          />
+          <h2
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '24px',
+              color: 'var(--text-primary)',
+              fontWeight: 900,
+              marginBottom: '8px',
+            }}
+          >
+            Loading tracks...
+          </h2>
+          <p
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '13px',
+              color: 'var(--text-secondary)',
+              fontStyle: 'italic',
+            }}
+          >
+            getting your quiz ready
+          </p>
         </div>
       </main>
     )

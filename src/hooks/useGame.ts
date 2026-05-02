@@ -63,8 +63,8 @@ export function useGame(artistId: string) {
       try {
         // fetch artist info and tracks together
         const [tracksRes, artistRes] = await Promise.all([
-          fetch(`/api/spotify/tracks?artistId=${artistId}`),
-          fetch(`/api/spotify/artist?artistId=${artistId}`),
+          fetch(`/api/deezer/tracks?artistId=${artistId}`),
+          fetch(`/api/deezer/artist?artistId=${artistId}`),
         ])
 
         if (controller.signal.aborted) return

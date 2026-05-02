@@ -17,111 +17,331 @@ export default function ResultCard({ gameState }: Props) {
     FAN_RANKS[FAN_RANKS.length - 1]
   const percentage = Math.round((score / total) * 100)
 
+  const rankMessage = () => {
+    if (score >= 9) return `you really know your ${artistName} 🔥`
+    if (score >= 7) return `solid ${artistName} fan`
+    if (score >= 4) return `casual ${artistName} listener`
+    return `do you even listen to ${artistName}? 💀`
+  }
+
   return (
-    <main className='min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-4 relative overflow-hidden'>
+    <main
+      style={{
+        minHeight: '100vh',
+        background: 'var(--cream)',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* artist image hero */}
       <div
-        className='absolute inset-0 opacity-3'
         style={{
-          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 28px, #333 28px, #333 29px)`,
+          position: 'relative',
+          height: '40vh',
+          background: '#2a2a2a',
+          overflow: 'hidden',
+          flexShrink: 0,
         }}
-      />
-
-      <div className='max-w-sm w-full text-center space-y-6 relative z-10'>
-        <p className='font-mono text-xs text-zinc-600 tracking-widest'>
-          ◆ RESULTS ◆
-        </p>
-
-        {/* artist image + name */}
+      >
         {artistImage && (
-          <div className='flex items-center justify-center gap-3'>
-            <img
-              src={artistImage}
-              alt={artistName}
-              className='w-12 h-12 grayscale object-cover'
-            />
-            <p
-              className='text-zinc-400 text-sm'
-              style={{ fontFamily: 'var(--font-special-elite)' }}
-            >
-              {artistName}
-            </p>
-          </div>
+          <img
+            src={artistImage}
+            alt={artistName}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'top',
+              opacity: 0.85,
+            }}
+          />
         )}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(180deg, transparent 20%, var(--cream) 100%)',
+          }}
+        />
 
+        {/* artist name overlay */}
+        <div style={{ position: 'absolute', bottom: '16px', left: '20px' }}>
+          <p
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              color: 'rgba(255,255,255,0.5)',
+              letterSpacing: '0.2em',
+              marginBottom: '4px',
+            }}
+          >
+            FAN REPORT
+          </p>
+          <p
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '22px',
+              color: '#fff',
+              fontWeight: 900,
+              textShadow: '0 2px 8px rgba(0,0,0,0.3)',
+            }}
+          >
+            {artistName}
+          </p>
+        </div>
+      </div>
+
+      {/* content */}
+      <div
+        style={{
+          padding: '1rem 1.5rem 2rem',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+        }}
+      >
         {/* rank */}
-        <div className='relative tape border-2 border-[#e8e0d0] p-8 space-y-4 bg-[#0f0f0f]'>
+        <div>
           <h1
-            className='text-5xl text-[#ff3e3e] flicker'
-            style={{ fontFamily: 'var(--font-bebas)', letterSpacing: '0.05em' }}
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: 'clamp(36px, 9vw, 52px)',
+              color: 'var(--text-primary)',
+              fontWeight: 900,
+              lineHeight: 1,
+              marginBottom: '6px',
+            }}
           >
             {rank.title}
           </h1>
-
-          {/* certified fan line with artist name */}
           <p
-            className='text-[#c8b89a] text-sm'
-            style={{ fontFamily: 'var(--font-special-elite)' }}
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '15px',
+              color: 'var(--accent)',
+              fontStyle: 'italic',
+            }}
           >
-            {score >= 9
-              ? `certified ${artistName} stan 🔥`
-              : score >= 7
-                ? `real ${artistName} fan`
-                : score >= 4
-                  ? `casual ${artistName} listener`
-                  : `who even is ${artistName}? 💀`}
+            {rankMessage()}
           </p>
-
-          <div className='border-t border-zinc-800 pt-4 space-y-1'>
-            <div
-              className='text-6xl text-white'
-              style={{ fontFamily: 'var(--font-bebas)' }}
-            >
-              {score}
-              <span className='text-zinc-600 text-3xl'>/{total}</span>
-            </div>
-            <p className='font-mono text-xs text-zinc-500'>
-              {percentage}% CORRECT
-            </p>
-          </div>
         </div>
 
-        {/* answer breakdown */}
-        <div className='flex justify-center gap-1'>
-          {gameState.answers.map((answer, i) => (
-            <div
-              key={i}
-              className={`w-6 h-6 border flex items-center justify-center text-xs font-mono ${
-                answer.isCorrect
-                  ? 'bg-[#1a3a1a] border-[#4ade80] text-[#4ade80]'
-                  : 'bg-transparent border-zinc-700 text-zinc-700'
-              }`}
-            >
-              {answer.isCorrect ? '✓' : '✗'}
-            </div>
-          ))}
-        </div>
-
-        {/* buttons */}
-        <div className='space-y-3'>
-          <div className='relative'>
-            <div className='absolute inset-0 bg-[#ff3e3e] translate-x-1 translate-y-1' />
-            <button
-              onClick={() => router.push('/search')}
-              className='relative w-full bg-[#e8e0d0] text-[#0a0a0a] font-bold py-4 text-xl transition-all hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1'
+        {/* score card */}
+        <div
+          style={{
+            background: '#fff',
+            border: '0.5px solid var(--cream-border)',
+            borderRadius: '14px',
+            padding: '16px',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '10px',
+            }}
+          >
+            <span
               style={{
-                fontFamily: 'var(--font-bebas)',
-                letterSpacing: '0.1em',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '10px',
+                color: 'var(--text-muted)',
+                letterSpacing: '0.15em',
               }}
             >
-              TRY ANOTHER ARTIST
-            </button>
+              YOUR SCORE
+            </span>
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                color: 'var(--accent)',
+                fontWeight: 700,
+              }}
+            >
+              {percentage}%
+            </span>
           </div>
 
+          {/* progress bar */}
+          <div
+            style={{
+              height: '6px',
+              background: 'var(--cream-border)',
+              borderRadius: '3px',
+              marginBottom: '14px',
+            }}
+          >
+            <div
+              style={{
+                width: `${percentage}%`,
+                height: '100%',
+                background: 'var(--accent)',
+                borderRadius: '3px',
+                transition: 'width 0.8s ease',
+              }}
+            />
+          </div>
+
+          {/* track breakdown */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(10, 1fr)',
+              gap: '4px',
+            }}
+          >
+            {gameState.answers.map((answer, i) => (
+              <div
+                key={i}
+                style={{
+                  height: '22px',
+                  borderRadius: '4px',
+                  background: answer.isCorrect
+                    ? 'var(--accent)'
+                    : 'var(--cream-border)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {answer.isCorrect ? (
+                  <svg width='8' height='8' viewBox='0 0 8 8' fill='none'>
+                    <path
+                      d='M1.5 4l2 2 3-3'
+                      stroke='#fff'
+                      strokeWidth='1.2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
+                  </svg>
+                ) : (
+                  <svg width='8' height='8' viewBox='0 0 8 8' fill='none'>
+                    <path
+                      d='M2 2l4 4M6 2l-4 4'
+                      stroke='#fff'
+                      strokeWidth='1.2'
+                      strokeLinecap='round'
+                    />
+                  </svg>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* share row */}
+        <button
+          onClick={async () => {
+            if (navigator.share) {
+              await navigator.share({
+                title: 'StanCheck',
+                text: `I got "${rank.title}" on the ${artistName} StanCheck! ${rankMessage()} — stancheck-mat.vercel.app`,
+                url: 'https://stancheck-mat.vercel.app',
+              })
+            } else {
+              await navigator.clipboard.writeText(
+                `I got "${rank.title}" on the ${artistName} StanCheck! stancheck-mat.vercel.app`,
+              )
+              alert('Copied to clipboard!')
+            }
+          }}
+          style={{
+            width: '100%',
+            background: '#fff',
+            border: '0.5px solid var(--cream-border)',
+            borderRadius: '12px',
+            padding: '14px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          }}
+        >
+          <svg width='18' height='18' viewBox='0 0 18 18' fill='none'>
+            <circle cx='14' cy='4' r='2.5' fill='var(--accent)' />
+            <circle cx='4' cy='9' r='2.5' fill='var(--accent)' />
+            <circle cx='14' cy='14' r='2.5' fill='var(--accent)' />
+            <path
+              d='M6.5 8l5-3M6.5 10l5 3'
+              stroke='var(--accent)'
+              strokeWidth='1.2'
+              strokeLinecap='round'
+            />
+          </svg>
+          <p
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: '14px',
+              color: 'var(--text-secondary)',
+              fontWeight: 500,
+              margin: 0,
+            }}
+          >
+            Share your result
+          </p>
+          <span
+            style={{
+              marginLeft: 'auto',
+              fontFamily: 'var(--font-sans)',
+              fontSize: '14px',
+              color: 'var(--accent)',
+              fontWeight: 700,
+            }}
+          >
+            →
+          </span>
+        </button>
+
+        {/* buttons */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            marginTop: 'auto',
+          }}
+        >
+          <button
+            onClick={() => router.push('/search')}
+            style={{
+              width: '100%',
+              background: 'var(--text-primary)',
+              color: 'var(--cream)',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '16px',
+              fontFamily: 'var(--font-sans)',
+              fontWeight: 700,
+              fontSize: '15px',
+              cursor: 'pointer',
+              letterSpacing: '0.02em',
+            }}
+          >
+            Try Another Artist →
+          </button>
           <button
             onClick={() => router.push('/')}
-            className='w-full border-2 border-zinc-700 text-zinc-500 py-3 font-mono text-sm hover:border-zinc-500 hover:text-zinc-400 transition-all'
+            style={{
+              width: '100%',
+              background: 'transparent',
+              color: 'var(--text-muted)',
+              border: '0.5px solid var(--cream-border)',
+              borderRadius: '12px',
+              padding: '14px',
+              fontFamily: 'var(--font-sans)',
+              fontWeight: 500,
+              fontSize: '14px',
+              cursor: 'pointer',
+            }}
           >
-            back to home
+            Back to Home
           </button>
         </div>
       </div>
