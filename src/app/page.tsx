@@ -36,8 +36,9 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <p className='text-zinc-600 text-xs font-mono'>
-          // powered by deezer — no account needed
+        <p className='text-zinc-600 text-xs font-mono'>// powered by deezer</p>
+        <p className='text-zinc-700 text-xs font-mono tracking-widest'>
+          © MMXXVI RAYMART FAJUTAGANA
         </p>
       </div>
     </main>
