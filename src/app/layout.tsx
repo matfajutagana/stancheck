@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 export const metadata: Metadata = {
   title: 'Who Do You Stan? — Guess the Song Music Quiz',
@@ -69,6 +70,7 @@ export default function RootLayout({
     <html lang='en'>
       <body suppressHydrationWarning className='grain'>
         {children}
+        <GoogleAnalytics gaId='G-DBVNZG9SH4' />
       </body>
     </html>
   )
