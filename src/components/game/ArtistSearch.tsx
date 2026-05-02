@@ -23,7 +23,6 @@ export default function ArtistSearch() {
         `/api/spotify/search?q=${encodeURIComponent(value)}`,
       )
       const data = (await res.json()) as { artists?: SpotifyArtist[] }
-      console.log('Search response:', data)
       setArtists(data.artists ?? [])
     } catch (error) {
       console.error('Search failed:', error)
@@ -38,38 +37,50 @@ export default function ArtistSearch() {
 
   return (
     <div className='relative w-full'>
-      <input
-        type='text'
-        value={query}
-        onChange={(e) => handleSearch(e.target.value)}
-        placeholder='e.g. Drake, Kendrick, The Weeknd...'
-        className='w-full bg-zinc-900 text-white border border-zinc-700 rounded-full px-6 py-4 text-lg focus:outline-none focus:border-green-400 transition-colors'
-      />
+      <div className='relative'>
+        <div className='absolute inset-0 bg-[#ff3e3e] translate-x-1 translate-y-1' />
+        <input
+          type='text'
+          value={query}
+          onChange={(e) => handleSearch(e.target.value)}
+          placeholder='e.g. Deftones, Metallica, Drake'
+          className='relative w-full bg-[#0a0a0a] text-[#e8e0d0] border-2 border-[#e8e0d0] px-6 py-4 text-lg focus:outline-none focus:border-[#ff3e3e] transition-colors placeholder-zinc-600'
+          style={{ fontFamily: 'var(--font-special-elite)' }}
+        />
+      </div>
 
       {loading && (
-        <div className='absolute top-full mt-2 w-full text-center text-zinc-500 text-sm'>
-          Searching...
+        <div className='mt-3 text-center text-zinc-500 text-sm font-mono animate-pulse'>
+          searching...
         </div>
       )}
 
       {artists.length > 0 && (
-        <div className='absolute top-full mt-2 w-full bg-zinc-900 border border-zinc-700 rounded-2xl overflow-hidden z-10'>
-          {artists.map((artist) => (
+        <div className='absolute top-full mt-2 w-full bg-[#111] border-2 border-[#e8e0d0] overflow-hidden z-10'>
+          {artists.map((artist, i) => (
             <button
               key={artist.id}
               onClick={() => handleSelectArtist(artist)}
-              className='w-full flex items-center gap-4 px-4 py-3 hover:bg-zinc-800 transition-colors text-left'
+              className='w-full flex items-center gap-4 px-4 py-3 hover:bg-[#1a1a1a] transition-colors text-left border-b border-zinc-800 last:border-0'
             >
+              <span className='text-zinc-600 font-mono text-xs w-4'>
+                {i + 1}
+              </span>
               {artist.images[0] && (
                 <img
                   src={artist.images[0].url}
                   alt={artist.name}
-                  width={40}
-                  height={40}
-                  className='rounded-full object-cover w-10 h-10'
+                  width={36}
+                  height={36}
+                  className='object-cover w-9 h-9 grayscale'
                 />
               )}
-              <span className='text-white font-medium'>{artist.name}</span>
+              <span
+                className='text-[#e8e0d0] font-medium'
+                style={{ fontFamily: 'var(--font-special-elite)' }}
+              >
+                {artist.name}
+              </span>
             </button>
           ))}
         </div>

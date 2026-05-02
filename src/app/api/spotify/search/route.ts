@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
-  const token = request.cookies.get('spotify_access_token')
-  const query = request.nextUrl.searchParams.get('q')
+interface DeezerArtist {
+  id: number
+  name: string
+  picture_medium: string
+  picture_big: string
+}
 
-  if (!token) {
-    return NextResponse.json({ artists: [] })
-  }
+export async function GET(request: NextRequest) {
+  const query = request.nextUrl.searchParams.get('q')
 
   if (!query) {
     return NextResponse.json({ artists: [] })
@@ -14,23 +16,23 @@ export async function GET(request: NextRequest) {
 
   try {
     const response = await fetch(
-      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=artist&limit=5`,
-      {
-        headers: {
-          Authorization: `Bearer ${token.value}`,
-        },
-      },
+      `https://api.deezer.com/search/artist?q=${encodeURIComponent(query)}&limit=5`,
     )
 
-    const text = await response.text()
-    console.log('Spotify search response:', text.substring(0, 200))
+    const data = (await response.json()) as { data: DeezerArtist[] }
 
-    const data = JSON.parse(text)
-    const artists = data?.artists?.items ?? []
+    const artists = (data.data ?? []).map((artist) => ({
+      id: String(artist.id),
+      name: artist.name,
+      images: [
+        { url: artist.picture_big, width: 640, height: 640 },
+        { url: artist.picture_medium, width: 320, height: 320 },
+      ],
+    }))
 
     return NextResponse.json({ artists })
   } catch (error) {
-    console.error('Search error:', error)
+    console.error('Deezer search error:', error)
     return NextResponse.json({ artists: [] })
   }
 }

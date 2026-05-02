@@ -7,17 +7,35 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function buildQuestions(tracks: SpotifyTrack[]): QuizQuestion[] {
-  const shuffled = shuffleArray(tracks)
+  const seen = new Set<string>()
+  const uniqueTracks = tracks.filter((track) => {
+    const key = track.name.toLowerCase().trim()
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+
+  console.log('Building questions from', uniqueTracks.length, 'unique tracks')
+
+  const shuffled = shuffleArray(uniqueTracks)
   const total = Math.min(GAME_CONFIG.TOTAL_QUESTIONS, shuffled.length)
   const selected = shuffled.slice(0, total)
 
-  return selected.map((track) => {
-    const otherTracks = tracks.filter((t) => t.id !== track.id)
-    const decoys = shuffleArray(otherTracks)
-      .slice(0, Math.min(GAME_CONFIG.OPTIONS_COUNT - 1, otherTracks.length))
+  return selected.map((track, i) => {
+    const pool = uniqueTracks.filter(
+      (t) => t.name.toLowerCase().trim() !== track.name.toLowerCase().trim(),
+    )
+
+    const decoys = shuffleArray(pool)
+      .slice(0, Math.min(GAME_CONFIG.OPTIONS_COUNT - 1, pool.length))
       .map((t) => t.name)
 
-    const options = shuffleArray([...decoys, track.name])
+    const options = shuffleArray([track.name, ...decoys])
+
+    const hasCorrect = options.includes(track.name)
+    if (!hasCorrect) {
+      console.error(`Q${i + 1} missing correct answer!`, track.name, options)
+    }
 
     return {
       track,
@@ -34,13 +52,30 @@ export function useGame(artistId: string) {
     score: 0,
     answers: [],
     status: 'idle',
+    artistName: '',
+    artistImage: '',
   })
 
   useEffect(() => {
+    const controller = new AbortController()
+
     async function loadTracks() {
       try {
-        const res = await fetch(`/api/spotify/tracks?artistId=${artistId}`)
-        const data = (await res.json()) as { tracks: SpotifyTrack[] }
+        // fetch artist info and tracks together
+        const [tracksRes, artistRes] = await Promise.all([
+          fetch(`/api/spotify/tracks?artistId=${artistId}`),
+          fetch(`/api/spotify/artist?artistId=${artistId}`),
+        ])
+
+        if (controller.signal.aborted) return
+
+        const data = (await tracksRes.json()) as { tracks: SpotifyTrack[] }
+        const artistData = (await artistRes.json()) as {
+          name: string
+          image: string
+        }
+
+        if (controller.signal.aborted) return
 
         console.log('Tracks received:', data.tracks.length)
 
@@ -54,18 +89,29 @@ export function useGame(artistId: string) {
           ...prev,
           questions,
           status: 'playing',
+          artistName: artistData.name,
+          artistImage: artistData.image,
         }))
       } catch (error) {
-        console.error('Failed to load tracks:', error)
+        if (!controller.signal.aborted) {
+          console.error('Failed to load tracks:', error)
+        }
       }
     }
 
     loadTracks()
+
+    return () => {
+      controller.abort()
+    }
   }, [artistId])
 
   const answerQuestion = useCallback(
     (selectedAnswer: string, timeLeft: number) => {
       const currentQuestion = gameState.questions[gameState.currentIndex]
+
+      if (!currentQuestion) return
+
       const isCorrect = selectedAnswer === currentQuestion.correctAnswer
 
       const answer: UserAnswer = {

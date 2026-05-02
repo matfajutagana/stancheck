@@ -34,6 +34,8 @@ export interface GameState {
   score: number
   answers: UserAnswer[]
   status: 'idle' | 'playing' | 'finished'
+  artistName: string
+  artistImage: string
 }
 
 export interface UserAnswer {
@@ -49,3 +51,20 @@ export interface FanRank {
   description: string
   minScore: number
 }
+
+export interface SpotifyPlayer {
+  connect: () => Promise<boolean>
+  disconnect: () => void
+  addListener: (event: string, callback: (data: unknown) => void) => void
+  removeListener: (event: string) => void
+  getCurrentState: () => Promise<unknown>
+  setVolume: (volume: number) => Promise<void>
+  pause: () => Promise<void>
+  resume: () => Promise<void>
+  togglePlay: () => Promise<void>
+  seek: (position: number) => Promise<void>
+  previousTrack: () => Promise<void>
+  nextTrack: () => Promise<void>
+}
+
+export type AnswerState = 'unanswered' | 'correct' | 'wrong' | 'expired'
