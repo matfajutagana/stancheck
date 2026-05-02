@@ -46,7 +46,7 @@ export default function ArtistSearch() {
         spellCheck={false}
         value={query}
         onChange={(e) => handleSearch(e.target.value)}
-        placeholder='e.g. Eraserheads, Drake, Kamikazee...'
+        placeholder='e.g. Taylor Swift, Drake, Bad Bunny...'
         style={{
           width: '100%',
           maxWidth: '100%', // ← never exceed parent

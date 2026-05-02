@@ -33,7 +33,7 @@ export default function ResultCard({ gameState }: Props) {
         flexDirection: 'column',
       }}
     >
-      {/* artist image hero */}
+      {/* hero */}
       <div
         style={{
           position: 'relative',
@@ -64,23 +64,13 @@ export default function ResultCard({ gameState }: Props) {
               'linear-gradient(180deg, transparent 20%, var(--cream) 100%)',
           }}
         />
-
-        {/* logo top left */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '16px',
-            left: '16px',
-          }}
-        >
+        <div style={{ position: 'absolute', top: '16px', left: '16px' }}>
           <img
             src='/logo.svg'
             alt='StanCheck'
             style={{ height: '28px', width: 'auto' }}
           />
         </div>
-
-        {/* artist name overlay */}
         <div style={{ position: 'absolute', bottom: '16px', left: '20px' }}>
           <p
             style={{
@@ -117,7 +107,6 @@ export default function ResultCard({ gameState }: Props) {
           gap: '16px',
         }}
       >
-        {/* rank */}
         <div>
           <h1
             style={{
@@ -143,7 +132,6 @@ export default function ResultCard({ gameState }: Props) {
           </p>
         </div>
 
-        {/* score card */}
         <div
           style={{
             background: '#fff',
@@ -182,8 +170,6 @@ export default function ResultCard({ gameState }: Props) {
               {percentage}%
             </span>
           </div>
-
-          {/* progress bar */}
           <div
             style={{
               height: '6px',
@@ -202,8 +188,6 @@ export default function ResultCard({ gameState }: Props) {
               }}
             />
           </div>
-
-          {/* track breakdown */}
           <div
             style={{
               display: 'grid',
@@ -250,71 +234,6 @@ export default function ResultCard({ gameState }: Props) {
           </div>
         </div>
 
-        {/* share row */}
-        <button
-          onClick={async () => {
-            if (navigator.share) {
-              await navigator.share({
-                title: 'Who do you Stan?',
-                text: `I got "${rank.title}" on the ${artistName} quiz! ${rankMessage()} — stancheck-mat.vercel.app`,
-                url: 'https://stancheck-mat.vercel.app',
-              })
-            } else {
-              await navigator.clipboard.writeText(
-                `I got "${rank.title}" on the ${artistName} StanCheck! stancheck-mat.vercel.app`,
-              )
-              alert('Copied to clipboard!')
-            }
-          }}
-          style={{
-            width: '100%',
-            background: '#fff',
-            border: '0.5px solid var(--cream-border)',
-            borderRadius: '12px',
-            padding: '14px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-          }}
-        >
-          <svg width='18' height='18' viewBox='0 0 18 18' fill='none'>
-            <circle cx='14' cy='4' r='2.5' fill='var(--accent)' />
-            <circle cx='4' cy='9' r='2.5' fill='var(--accent)' />
-            <circle cx='14' cy='14' r='2.5' fill='var(--accent)' />
-            <path
-              d='M6.5 8l5-3M6.5 10l5 3'
-              stroke='var(--accent)'
-              strokeWidth='1.2'
-              strokeLinecap='round'
-            />
-          </svg>
-          <p
-            style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: '14px',
-              color: 'var(--text-secondary)',
-              fontWeight: 500,
-              margin: 0,
-            }}
-          >
-            Share your result
-          </p>
-          <span
-            style={{
-              marginLeft: 'auto',
-              fontFamily: 'var(--font-sans)',
-              fontSize: '14px',
-              color: 'var(--accent)',
-              fontWeight: 700,
-            }}
-          >
-            →
-          </span>
-        </button>
-
-        {/* buttons */}
         <div
           style={{
             display: 'flex',
