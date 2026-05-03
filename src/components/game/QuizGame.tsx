@@ -60,8 +60,8 @@ export default function QuizGame({ artistId }: Props) {
       setIsPlaying(false)
       reset()
 
-      if (currentTrack?.preview_url) {
-        currentPreviewUrl.current = currentTrack.preview_url
+      if (currentTrack?.id) {
+        currentPreviewUrl.current = currentTrack.id
       }
     }
   }, [gameState.currentIndex, isReady, gameState.status])
