@@ -14,7 +14,7 @@ export function useAudioPlayer(onTrackReady?: () => void) {
         audioRef.current = null
       }
 
-      const audio = new Audio(previewUrl) // 👈 only change
+      const audio = new Audio(previewUrl)
       audioRef.current = audio
 
       audio.addEventListener('canplaythrough', () => {

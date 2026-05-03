@@ -26,9 +26,9 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': contentType,
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
         'Content-Length': buffer.byteLength.toString(),
         'Accept-Ranges': 'bytes',
-        'Cache-Control': 'public, max-age=3600',
         'Access-Control-Allow-Origin': '*',
       },
     })

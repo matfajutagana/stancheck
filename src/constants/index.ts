@@ -9,22 +9,32 @@ export const GAME_CONFIG = {
 
 export const FAN_RANKS: FanRank[] = [
   {
-    title: 'Certified Stan 🏆',
+    title: 'Certified Stan',
     description: 'You know every track. Respect.',
-    minScore: 9,
+    minScore: 10,
   },
   {
-    title: 'Real One 🔥',
+    title: 'Day One',
+    description: 'You were there before the hype.',
+    minScore: 8,
+  },
+  {
+    title: 'Real One',
     description: 'You definitely know the albums.',
-    minScore: 7,
+    minScore: 6,
   },
   {
-    title: 'Casual Listener 🎧',
-    description: 'You know the hits but not the deep cuts.',
+    title: 'Solid Fan',
+    description: 'You know more than the average listener.',
     minScore: 4,
   },
   {
-    title: 'Who Are You 💀',
+    title: 'Casual Listener',
+    description: 'You know the hits but not the deep cuts.',
+    minScore: 2,
+  },
+  {
+    title: 'Who Are You',
     description: 'Are you sure you picked the right artist?',
     minScore: 0,
   },
