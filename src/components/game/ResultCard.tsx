@@ -37,7 +37,7 @@ export default function ResultCard({ gameState }: Props) {
       <div
         style={{
           position: 'relative',
-          height: '40vh',
+          height: '28vh',
           background: '#2a2a2a',
           overflow: 'hidden',
           flexShrink: 0,
@@ -100,7 +100,7 @@ export default function ResultCard({ gameState }: Props) {
       {/* content */}
       <div
         style={{
-          padding: '1rem 1.5rem 2rem',
+          padding: '0.75rem 1.25rem 1.5rem',
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
@@ -111,7 +111,7 @@ export default function ResultCard({ gameState }: Props) {
           <h1
             style={{
               fontFamily: 'var(--font-serif)',
-              fontSize: 'clamp(36px, 9vw, 52px)',
+              fontSize: 'clamp(28px, 7vw, 40px)',
               color: 'var(--text-primary)',
               fontWeight: 900,
               lineHeight: 1,

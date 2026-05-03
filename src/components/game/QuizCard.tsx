@@ -14,6 +14,7 @@ interface Props {
   selectedAnswer: string
   isPlaying: boolean
   onPlay: () => void
+  artistImage: string
 }
 
 export default function QuizCard({
@@ -27,6 +28,7 @@ export default function QuizCard({
   selectedAnswer,
   isPlaying,
   onPlay,
+  artistImage,
 }: Props) {
   const timerPercent = (timeLeft / GAME_CONFIG.TIMER_SECONDS) * 100
   const timerColor =
@@ -89,7 +91,7 @@ export default function QuizCard({
         {question.track.album.images[0] && (
           <img
             src={question.track.album.images[0].url}
-            alt='artist'
+            alt='album'
             style={{
               width: '100%',
               height: '100%',

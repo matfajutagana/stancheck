@@ -14,10 +14,15 @@ export async function GET(request: NextRequest) {
       picture_big: string
     }
 
-    return NextResponse.json({
-      name: data.name,
-      image: data.picture_big,
-    })
+    return NextResponse.json(
+      { name: data.name, image: data.picture_big },
+      {
+        headers: {
+          'Cache-Control':
+            'public, s-maxage=86400, stale-while-revalidate=604800',
+        },
+      },
+    )
   } catch (error) {
     console.error('Artist fetch error:', error)
     return NextResponse.json({ name: '', image: '' })

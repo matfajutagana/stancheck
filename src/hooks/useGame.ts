@@ -107,8 +107,24 @@ function buildQuestions(
     return true
   })
 
-  // Fully random — no tiers, different every session
-  const selected = shuffleArray(unique).slice(0, GAME_CONFIG.TOTAL_QUESTIONS)
+  // Round-robin across albums so no 2 consecutive tracks from same album
+  const byAlbum = new Map<string, SpotifyTrack[]>()
+  for (const track of shuffleArray(unique)) {
+    const key = track.album.name
+    if (!byAlbum.has(key)) byAlbum.set(key, [])
+    byAlbum.get(key)!.push(track)
+  }
+
+  const interleaved: SpotifyTrack[] = []
+  const buckets = [...byAlbum.values()]
+  let i = 0
+  while (interleaved.length < unique.length) {
+    const bucket = buckets[i % buckets.length]
+    if (bucket && bucket.length > 0) interleaved.push(bucket.shift()!)
+    i++
+  }
+
+  const selected = interleaved.slice(0, GAME_CONFIG.TOTAL_QUESTIONS)
 
   // Pre-ban ALL correct answers from being distractors anywhere in the quiz
   const allCorrectNames = new Set(

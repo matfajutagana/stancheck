@@ -160,6 +160,7 @@ export default function QuizGame({ artistId }: Props) {
       selectedAnswer={selectedAnswer}
       isPlaying={isPlaying}
       onPlay={handlePlay}
+      artistImage={gameState.artistImage}
       onAnswer={(answer) => {
         if (isAnswered || !isPlaying) return
         stop()

@@ -36,7 +36,14 @@ export default function ArtistSearch() {
 
   return (
     // ← overflow hidden here clips the dropdown to the container width
-    <div style={{ position: 'relative', width: '100%', minWidth: 0 }}>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        minWidth: 0,
+        minHeight: '52px',
+      }}
+    >
       <input
         type='text'
         inputMode='search' // ← correct keyboard type on mobile
@@ -59,7 +66,6 @@ export default function ArtistSearch() {
           fontFamily: 'var(--font-sans)',
           color: 'var(--text-primary)',
           outline: 'none',
-          marginBottom: '8px',
           boxSizing: 'border-box',
           WebkitAppearance: 'none',
         }}

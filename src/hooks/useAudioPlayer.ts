@@ -14,8 +14,7 @@ export function useAudioPlayer(onTrackReady?: () => void) {
         audioRef.current = null
       }
 
-      const proxiedUrl = `/api/audio?url=${encodeURIComponent(previewUrl)}`
-      const audio = new Audio(proxiedUrl)
+      const audio = new Audio(previewUrl) // 👈 only change
       audioRef.current = audio
 
       audio.addEventListener('canplaythrough', () => {
