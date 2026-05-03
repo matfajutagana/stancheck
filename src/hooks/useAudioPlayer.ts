@@ -37,6 +37,7 @@ export function useAudioPlayer(onTrackReady?: () => void) {
 
       audio.addEventListener('error', () => {
         console.warn('Audio error code:', audio.error?.code)
+        console.warn('Failed URL:', audio.src)
       })
 
       audio.load()

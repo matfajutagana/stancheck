@@ -110,13 +110,6 @@ export async function GET(request: NextRequest) {
     )
     const albumsData = (await albumsRes.json()) as { data: DeezerAlbum[] }
 
-    console.log(
-      'All albums from Deezer:',
-      (albumsData.data ?? []).map(
-        (a) => `${a.title} (fans: ${a.fans}, type: ${a.record_type})`,
-      ),
-    )
-
     const albums = (albumsData.data ?? [])
       .filter((a) => !isJunkAlbum(a.title))
       .filter((a) => a.record_type !== 'single' && a.record_type !== 'ep')
@@ -145,20 +138,12 @@ export async function GET(request: NextRequest) {
           (t) =>
             t.preview &&
             !isJunkTrack(t.title) &&
-            !isCollab(t, artistId) &&
-            (t.duration ?? 999) >= 60, // filter tracks under 60 seconds
+            !isCollab(t, artistId!) &&
+            (t.duration ?? 999) >= 60,
         ),
         all: mapped.filter((t) => !isJunkTrack(t.title)),
       }
     }
-
-    console.log('Total albums after filter:', albums.length)
-    console.log(
-      'Albums being used:',
-      albums
-        .slice(0, 12)
-        .map((a) => `${a.title} (fans: ${a.fans}, type: ${a.record_type})`),
-    )
 
     const seenAlbumTitles = new Set<string>()
     const dedupedAlbums = albums.filter((a) => {
@@ -174,11 +159,6 @@ export async function GET(request: NextRequest) {
       seenAlbumTitles.add(base)
       return true
     })
-
-    console.log(
-      'Albums after dedup:',
-      dedupedAlbums.map((a) => a.title),
-    )
 
     const albumResults = await Promise.all(
       dedupedAlbums.slice(0, 12).map(fetchAlbumTracks),
@@ -245,15 +225,12 @@ export async function GET(request: NextRequest) {
       },
     }))
 
-    console.log('Playable tracks:', finalTracks.length)
-    console.log('Distractor pool:', distractorPool.length)
-
     return NextResponse.json(
       { tracks: finalTracks, distractorPool },
       {
         headers: {
           'Cache-Control':
-            'public, s-maxage=86400, stale-while-revalidate=604800',
+            'public, s-maxage=3600, stale-while-revalidate=86400',
         },
       },
     )
