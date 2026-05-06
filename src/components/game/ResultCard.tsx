@@ -422,7 +422,7 @@ export default function ResultCard({ gameState }: Props) {
                     letterSpacing: '0.1em',
                   }}
                 >
-                  WHODOYOUSTAN.COM
+                  WHODOYOUSTAN.COM · MUSIC DATA PROVIDED COURTESY OF ITUNES
                 </span>
                 <span
                   style={{
@@ -844,7 +844,7 @@ export default function ResultCard({ gameState }: Props) {
                     letterSpacing: '0.1em',
                   }}
                 >
-                  WHODOYOUSTAN.COM
+                  WHODOYOUSTAN.COM · MUSIC DATA PROVIDED COURTESY OF ITUNES
                 </span>
                 <span
                   style={{

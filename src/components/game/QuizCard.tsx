@@ -15,6 +15,8 @@ interface Props {
   isPlaying: boolean
   onPlay: () => void
   artistImage: string
+  onNext: () => void
+  isLastQuestion: boolean
 }
 
 export default function QuizCard({
@@ -29,6 +31,8 @@ export default function QuizCard({
   isPlaying,
   onPlay,
   artistImage,
+  onNext,
+  isLastQuestion,
 }: Props) {
   const timerPercent = (timeLeft / GAME_CONFIG.TIMER_SECONDS) * 100
   const timerColor =
@@ -109,7 +113,7 @@ export default function QuizCard({
           }}
         />
 
-        {/* top bar — logo left, question counter + score right */}
+        {/* top bar */}
         <div
           style={{
             position: 'absolute',
@@ -121,14 +125,11 @@ export default function QuizCard({
             alignItems: 'center',
           }}
         >
-          {/* logo */}
           <img
             src='/logo.svg'
             alt='StanCheck'
             style={{ height: '28px', width: 'auto' }}
           />
-
-          {/* question counter + score */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span
               style={{
@@ -246,7 +247,6 @@ export default function QuizCard({
             gap: '12px',
           }}
         >
-          {/* vinyl svg */}
           <svg width='36' height='36' viewBox='0 0 36 36' fill='none'>
             <circle
               cx='18'
@@ -288,7 +288,6 @@ export default function QuizCard({
               {isAnswered ? question.correctAnswer : 'Guess the song...'}
             </p>
           </div>
-          {/* sound waves */}
           {isPlaying && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
               {[8, 14, 10, 6, 12].map((h, i) => (
@@ -382,6 +381,7 @@ export default function QuizCard({
           ))}
         </div>
 
+        {/* press play hint */}
         {!isPlaying && !isAnswered && (
           <p
             style={{
@@ -394,6 +394,71 @@ export default function QuizCard({
           >
             press play to start the timer
           </p>
+        )}
+
+        {/* iTunes badge + Next button — shows after answer */}
+        {isAnswered && (
+          <>
+            <a
+              href={(question.track as any).trackViewUrl ?? '#'}
+              target='_blank'
+              rel='noopener noreferrer'
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                background: '#fff',
+                border: '0.5px solid var(--cream-border)',
+                borderRadius: '10px',
+                padding: '10px 14px',
+                textDecoration: 'none',
+              }}
+            >
+              <div>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '8px',
+                    color: 'var(--text-muted)',
+                    letterSpacing: '0.1em',
+                    margin: 0,
+                  }}
+                >
+                  PROVIDED COURTESY OF ITUNES
+                </p>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '12px',
+                    color: 'var(--text-primary)',
+                    fontWeight: 600,
+                    margin: 0,
+                  }}
+                >
+                  Listen on iTunes →
+                </p>
+              </div>
+            </a>
+
+            <button
+              onClick={onNext}
+              style={{
+                width: '100%',
+                background: 'var(--text-primary)',
+                color: 'var(--cream)',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '15px',
+                fontFamily: 'var(--font-sans)',
+                fontWeight: 700,
+                fontSize: '15px',
+                cursor: 'pointer',
+                letterSpacing: '0.03em',
+              }}
+            >
+              {isLastQuestion ? 'See Results →' : 'Next Question →'}
+            </button>
+          </>
         )}
       </div>
     </main>

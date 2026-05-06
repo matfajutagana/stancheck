@@ -9,76 +9,124 @@ export default function SearchPage() {
         background: 'var(--cream)',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem 1.5rem',
+        padding: '0 1.5rem',
         overflowX: 'hidden',
         width: '100%',
+        position: 'relative',
+        overflowY: 'hidden',
+        maxHeight: '100vh',
       }}
     >
       <FloatingCovers />
 
-      {/* logo */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <img
-          src='/logo.svg'
-          alt='Who Do You Stan'
-          style={{ height: '40px', width: 'auto' }}
-        />
-      </div>
-
+      {/* top bar */}
       <div
         style={{
-          width: '100%',
-          maxWidth: '400px',
-          minWidth: 0,
+          display: 'flex',
+          alignItems: 'center',
+          paddingTop: '3rem',
+          marginBottom: '0',
           position: 'relative',
           zIndex: 1,
         }}
       >
-        <p
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
-            color: 'var(--text-muted)',
-            letterSpacing: '0.2em',
-            marginBottom: '1.5rem',
-          }}
-        >
-          SEARCH
-        </p>
+        <img
+          src='/logo.svg'
+          alt='Who Do You Stan'
+          style={{ height: '28px', width: 'auto' }}
+        />
+      </div>
 
+      {/* main content — pushed to lower third of screen */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          paddingBottom: '0',
+          paddingTop: '2rem',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        {/* heading */}
         <h1
           style={{
             fontFamily: 'var(--font-serif)',
-            fontSize: 'clamp(48px, 15vw, 72px)',
+            fontSize: 'clamp(52px, 18vw, 80px)',
             color: 'var(--text-primary)',
             fontWeight: 900,
-            lineHeight: 1,
-            marginBottom: '8px',
-            wordBreak: 'break-word',
-            overflowWrap: 'break-word',
+            lineHeight: 0.95,
+            marginBottom: '12px',
+            letterSpacing: '-0.02em',
           }}
         >
-          Pick an{' '}
+          Pick an
+          <br />
           <span style={{ color: 'var(--accent)', fontStyle: 'italic' }}>
             Artist
           </span>
         </h1>
 
+        {/* tagline */}
         <p
           style={{
             fontFamily: 'var(--font-serif)',
-            fontSize: '16px',
+            fontSize: '15px',
             color: 'var(--text-secondary)',
             fontStyle: 'italic',
-            marginBottom: '2rem',
+            marginBottom: '1.5rem',
           }}
         >
           who do you stan?
         </p>
 
+        {/* search */}
         <ArtistSearch />
+
+        {/* badges */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '6px',
+            flexWrap: 'wrap',
+            marginTop: '1.25rem',
+          }}
+        >
+          {['10 TRACKS', '15 SEC', 'FAN RANK'].map((badge, i) => (
+            <span
+              key={badge}
+              style={{
+                background: i === 1 ? 'var(--accent)' : 'var(--text-primary)',
+                color: 'var(--cream)',
+                fontSize: '9px',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.1em',
+                padding: '4px 10px',
+                borderRadius: '20px',
+                fontWeight: 700,
+              }}
+            >
+              {badge}
+            </span>
+          ))}
+        </div>
+
+        {/* iTunes attribution */}
+        <p
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '8px',
+            color: 'var(--text-muted)',
+            letterSpacing: '0.1em',
+            marginTop: '1.5rem',
+            lineHeight: 1.8,
+          }}
+        >
+          music previews provided courtesy of iTunes
+          <br />© 2026 whodoyoustan
+        </p>
       </div>
     </main>
   )

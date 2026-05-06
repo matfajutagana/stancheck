@@ -173,10 +173,10 @@ export function useGame(artistId: string) {
     async function loadTracks() {
       try {
         const [tracksRes, artistRes] = await Promise.all([
-          fetch(`/api/deezer/tracks?artistId=${artistId}`, {
+          fetch(`/api/itunes/tracks?artistId=${artistId}`, {
             signal: controller.signal,
           }),
-          fetch(`/api/deezer/artist?artistId=${artistId}`, {
+          fetch(`/api/itunes/artist?artistId=${artistId}`, {
             signal: controller.signal,
           }),
         ])

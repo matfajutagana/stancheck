@@ -26,7 +26,7 @@ export default function FloatingCovers() {
   useEffect(() => {
     async function fetchCovers() {
       try {
-        const res = await fetch('/api/deezer/chart')
+        const res = await fetch('/api/itunes/chart')
         const data = (await res.json()) as { covers: Cover[] }
         setCovers(data.covers ?? [])
       } catch (e) {

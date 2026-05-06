@@ -7,58 +7,41 @@ export function useAudioPlayer(onTrackReady?: () => void) {
   const pendingTrackIdRef = useRef<string | null>(null)
 
   const playTrack = useCallback(
-    async (trackId: string) => {
+    async (previewUrl: string) => {
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current.src = ''
         audioRef.current = null
       }
 
-      try {
-        // fetch fresh preview URL at play time — never expired
-        const res = await fetch(`/api/deezer/preview?trackId=${trackId}`)
-        const data = (await res.json()) as {
-          preview_url?: string
-          error?: string
-        }
+      // ✅ Route through proxy to handle CORS
+      const proxiedUrl = `/api/audio?url=${encodeURIComponent(previewUrl)}`
+      const audio = new Audio(proxiedUrl)
+      audioRef.current = audio
 
-        if (!data.preview_url) {
-          console.warn('No preview URL for track:', trackId)
-          onTrackReady?.() // skip this track
-          return
-        }
+      audio.addEventListener('canplaythrough', () => {
+        audio
+          .play()
+          .then(() => {
+            setNeedsInteraction(false)
+            onTrackReady?.()
+          })
+          .catch((err) => {
+            if (err.name === 'NotAllowedError') {
+              pendingTrackIdRef.current = previewUrl
+              setNeedsInteraction(true)
+            } else {
+              console.error('Play failed:', err)
+            }
+          })
+      })
 
-        const audio = new Audio(data.preview_url)
-        audioRef.current = audio
-
-        audio.addEventListener('canplaythrough', () => {
-          audio
-            .play()
-            .then(() => {
-              setNeedsInteraction(false)
-              onTrackReady?.()
-            })
-            .catch((err) => {
-              if (err.name === 'NotAllowedError') {
-                console.log('Needs user interaction first')
-                pendingTrackIdRef.current = trackId
-                setNeedsInteraction(true)
-              } else {
-                console.error('Play failed:', err)
-              }
-            })
-        })
-
-        audio.addEventListener('error', () => {
-          console.warn('Audio error code:', audio.error?.code)
-          onTrackReady?.() // skip broken track
-        })
-
-        audio.load()
-      } catch (err) {
-        console.error('Failed to fetch preview URL:', err)
+      audio.addEventListener('error', () => {
+        console.warn('Audio error code:', audio.error?.code)
         onTrackReady?.()
-      }
+      })
+
+      audio.load()
     },
     [onTrackReady],
   )

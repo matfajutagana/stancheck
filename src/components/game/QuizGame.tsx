@@ -17,6 +17,10 @@ export default function QuizGame({ artistId }: Props) {
   const [selectedAnswer, setSelectedAnswer] = useState('')
   const [isAnswered, setIsAnswered] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [pendingAnswer, setPendingAnswer] = useState<{
+    answer: string
+    timeLeft: number
+  } | null>(null)
   const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const currentPreviewUrl = useRef<string | null>(null)
 
@@ -26,13 +30,9 @@ export default function QuizGame({ artistId }: Props) {
     setIsAnswered(true)
     setIsPlaying(false)
     pauseTrack()
-    if (advanceTimeoutRef.current) clearTimeout(advanceTimeoutRef.current)
-    advanceTimeoutRef.current = setTimeout(() => {
-      answerQuestion('', 0)
-      setIsAnswered(false)
-      setIsPlaying(false)
-    }, 1500)
-  }, [answerQuestion])
+    // Store expired answer to submit when user clicks next
+    setPendingAnswer({ answer: '', timeLeft: 0 })
+  }, [])
 
   const { timeLeft, start, stop, reset } = useTimer(handleExpire)
 
@@ -58,10 +58,11 @@ export default function QuizGame({ artistId }: Props) {
       setIsAnswered(false)
       setSelectedAnswer('')
       setIsPlaying(false)
+      setPendingAnswer(null)
       reset()
 
-      if (currentTrack?.id) {
-        currentPreviewUrl.current = currentTrack.id
+      if (currentTrack?.preview_url) {
+        currentPreviewUrl.current = currentTrack.preview_url
       }
     }
   }, [gameState.currentIndex, isReady, gameState.status])
@@ -78,6 +79,16 @@ export default function QuizGame({ artistId }: Props) {
       setIsPlaying(true)
       playTrack(currentPreviewUrl.current)
     }
+  }
+
+  function handleNext() {
+    if (!pendingAnswer) return
+    stopTrack()
+    answerQuestion(pendingAnswer.answer, pendingAnswer.timeLeft)
+    setIsAnswered(false)
+    setSelectedAnswer('')
+    setIsPlaying(false)
+    setPendingAnswer(null)
   }
 
   if (gameState.status === 'idle') {
@@ -149,6 +160,9 @@ export default function QuizGame({ artistId }: Props) {
   const currentQuestion = gameState.questions[gameState.currentIndex]
   if (!currentQuestion) return null
 
+  const isLastQuestion =
+    gameState.currentIndex + 1 === gameState.questions.length
+
   return (
     <QuizCard
       question={currentQuestion}
@@ -161,6 +175,8 @@ export default function QuizGame({ artistId }: Props) {
       isPlaying={isPlaying}
       onPlay={handlePlay}
       artistImage={gameState.artistImage}
+      onNext={handleNext}
+      isLastQuestion={isLastQuestion}
       onAnswer={(answer) => {
         if (isAnswered || !isPlaying) return
         stop()
@@ -168,13 +184,8 @@ export default function QuizGame({ artistId }: Props) {
         timerStartedRef.current = false
         setSelectedAnswer(answer)
         setIsAnswered(true)
-        if (advanceTimeoutRef.current) clearTimeout(advanceTimeoutRef.current)
-        advanceTimeoutRef.current = setTimeout(() => {
-          answerQuestion(answer, timeLeft)
-          setIsAnswered(false)
-          setSelectedAnswer('')
-          setIsPlaying(false)
-        }, 1500)
+        // Store answer but don't advance yet — wait for Next button
+        setPendingAnswer({ answer, timeLeft })
       }}
     />
   )

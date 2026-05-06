@@ -7,6 +7,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'No URL' }, { status: 400 })
   }
 
+  // ✅ Only allow Apple iTunes preview URLs
+  if (!url.startsWith('https://audio-ssl.itunes.apple.com')) {
+    return NextResponse.json({ error: 'Invalid URL' }, { status: 400 })
+  }
+
   try {
     const response = await fetch(url, {
       headers: {
@@ -26,7 +31,9 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': contentType,
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'no-store, no-cache, must-revalidate', // ✅
+        'CDN-Cache-Control': 'no-store', // ✅
+        'Vercel-CDN-Cache-Control': 'no-store', // ✅
         'Content-Length': buffer.byteLength.toString(),
         'Accept-Ranges': 'bytes',
         'Access-Control-Allow-Origin': '*',

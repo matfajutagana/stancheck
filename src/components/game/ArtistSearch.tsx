@@ -19,7 +19,7 @@ export default function ArtistSearch() {
     setLoading(true)
     try {
       const res = await fetch(
-        `/api/deezer/search?q=${encodeURIComponent(value)}`,
+        `/api/itunes/search?q=${encodeURIComponent(value)}`,
       )
       const data = (await res.json()) as { artists?: SpotifyArtist[] }
       setArtists(data.artists ?? [])
@@ -135,7 +135,7 @@ export default function ArtistSearch() {
               >
                 {i + 1}
               </span>
-              {artist.images[0] && (
+              {artist.images[0]?.url && (
                 <img
                   src={artist.images[0].url}
                   alt={artist.name}

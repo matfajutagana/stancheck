@@ -8,15 +8,19 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const res = await fetch(`https://api.deezer.com/track/${trackId}`)
-    const data = (await res.json()) as { preview?: string }
+    const res = await fetch(`https://itunes.apple.com/lookup?id=${trackId}`)
+    const data = (await res.json()) as {
+      results: { previewUrl?: string }[]
+    }
 
-    if (!data.preview) {
+    const preview = data.results?.[0]?.previewUrl
+
+    if (!preview) {
       return NextResponse.json({ error: 'No preview' }, { status: 404 })
     }
 
     return NextResponse.json(
-      { preview_url: data.preview },
+      { preview_url: preview },
       { headers: { 'Cache-Control': 'no-store' } },
     )
   } catch (error) {
