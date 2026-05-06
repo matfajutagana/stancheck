@@ -9,6 +9,7 @@ export default function SearchPage() {
         background: 'var(--cream)',
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
         padding: '0 1.5rem',
         overflowX: 'hidden',
         width: '100%',
@@ -28,6 +29,7 @@ export default function SearchPage() {
           marginBottom: '0',
           position: 'relative',
           zIndex: 1,
+          maxWidth: '480px', // ✅ constrain on desktop
         }}
       >
         <img
@@ -37,7 +39,7 @@ export default function SearchPage() {
         />
       </div>
 
-      {/* main content — pushed to lower third of screen */}
+      {/* main content */}
       <div
         style={{
           flex: 1,
@@ -48,6 +50,8 @@ export default function SearchPage() {
           paddingTop: '2rem',
           position: 'relative',
           zIndex: 1,
+          maxWidth: '480px', // ✅ constrain on desktop, full width on mobile
+          width: '100%',
         }}
       >
         {/* heading */}

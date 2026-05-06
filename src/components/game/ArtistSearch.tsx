@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { SpotifyArtist } from '@/types'
 
@@ -9,33 +9,45 @@ export default function ArtistSearch() {
   const [artists, setArtists] = useState<SpotifyArtist[]>([])
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  async function handleSearch(value: string) {
-    setQuery(value)
-    if (value.length < 2) {
+  useEffect(() => {
+    // Clear previous timer
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (query.length < 2) {
       setArtists([])
+      setLoading(false)
       return
     }
+
+    // Wait 500ms after user stops typing
     setLoading(true)
-    try {
-      const res = await fetch(
-        `/api/itunes/search?q=${encodeURIComponent(value)}`,
-      )
-      const data = (await res.json()) as { artists?: SpotifyArtist[] }
-      setArtists(data.artists ?? [])
-    } catch (error) {
-      console.error('Search failed:', error)
-    } finally {
-      setLoading(false)
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `/api/itunes/search?q=${encodeURIComponent(query)}`,
+        )
+        const data = (await res.json()) as { artists?: SpotifyArtist[] }
+        setArtists(data.artists ?? [])
+      } catch (error) {
+        console.error('Search failed:', error)
+      } finally {
+        setLoading(false)
+      }
+    }, 500)
+
+    // Cleanup on unmount
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }
+  }, [query])
 
   function handleSelectArtist(artist: SpotifyArtist) {
     router.push(`/quiz/${artist.id}`)
   }
 
   return (
-    // ← overflow hidden here clips the dropdown to the container width
     <div
       style={{
         position: 'relative',
@@ -46,23 +58,23 @@ export default function ArtistSearch() {
     >
       <input
         type='text'
-        inputMode='search' // ← correct keyboard type on mobile
+        inputMode='search'
         autoComplete='off'
         autoCorrect='off'
         autoCapitalize='off'
         spellCheck={false}
         value={query}
-        onChange={(e) => handleSearch(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)}
         placeholder='e.g. Taylor Swift, Drake, Bad Bunny...'
         style={{
           width: '100%',
-          maxWidth: '100%', // ← never exceed parent
-          display: 'block', // ← no inline spacing quirks
+          maxWidth: '100%',
+          display: 'block',
           background: '#fff',
           border: '1.5px solid var(--cream-border)',
           borderRadius: '10px',
           padding: '14px 16px',
-          fontSize: '16px', // ← 16px prevents iOS auto-zoom on focus
+          fontSize: '16px',
           fontFamily: 'var(--font-sans)',
           color: 'var(--text-primary)',
           outline: 'none',
@@ -93,7 +105,7 @@ export default function ArtistSearch() {
             top: '100%',
             left: 0,
             right: 0,
-            width: '100%', // ← explicit width matches parent
+            width: '100%',
             background: '#fff',
             border: '0.5px solid var(--cream-border)',
             borderRadius: '10px',
