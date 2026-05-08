@@ -396,7 +396,7 @@ export default function QuizCard({
           </p>
         )}
 
-        {/* iTunes badge + Next button — shows after answer */}
+        {/* Apple Music badge + Next button — shows after answer */}
         {isAnswered && (
           <>
             <a
@@ -405,39 +405,14 @@ export default function QuizCard({
               rel='noopener noreferrer'
               style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                background: '#fff',
-                border: '0.5px solid var(--cream-border)',
-                borderRadius: '10px',
-                padding: '10px 14px',
-                textDecoration: 'none',
+                justifyContent: 'center',
               }}
             >
-              <div>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '8px',
-                    color: 'var(--text-muted)',
-                    letterSpacing: '0.1em',
-                    margin: 0,
-                  }}
-                >
-                  PROVIDED COURTESY OF ITUNES
-                </p>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '12px',
-                    color: 'var(--text-primary)',
-                    fontWeight: 600,
-                    margin: 0,
-                  }}
-                >
-                  Listen on iTunes →
-                </p>
-              </div>
+              <img
+                src='/get-it-itunes.svg'
+                alt='Listen on Apple Music'
+                style={{ height: '40px' }}
+              />
             </a>
 
             <button
